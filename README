@@ -1,0 +1,137 @@
+***Markov is coming***
+    parse_labyrinth:
+        Citeste labirintul din fisierul de input folosind fscanf.
+    get_adjacency_matrix:
+        Functie apelata de get_link_matrix
+        Primeste labirintul codificat in input si returneaza matricea de adiacenta.
+        Algoritmul porneste prin a numara bitii de 1 a iecarui numar din matricea Labyrinth.
+        Numara folosit pentru a aloca numarul de celule din matricea rara.
+        Apoi functia parcurge elementele matricei Labyrinth.
+            Deteremina codificarea fiecarui numar in ordinea LSB - MSB.
+            Daca bitul 4(Nord) este 0, atunci deasupra fie este drum spre alt nod, fie spre castig(i=0), se pune corespunzator 1 in mat de adiacenta.
+            Daca bitul 3(Sud) este 0, atunci jos este alt camp sau WIN.
+            Daca bitul 2(Est) este 0, la dreapta este fie alt camp, fie starea de LOOSE.
+            Daca bitul 1(Vest) este 0, la stanga este fie alt camp fie LOOSE.
+        Se pune 1 pe campurile win-win si lose-lose.
+    get_link_matrix:
+        Functia obtine matricea adiacenta de la functia descrisa anterior.
+        Apoi pentru fiecare linie, imparte fiecare element la suma elementelor pe linie(daca suma este nenula).
+        Returneaaza matricea obtinuta.
+    get_Jacobi_parameters:
+        Fie n dimensiunea matricii Link.
+        G va fi o "submatrice" a matricei Link formata din primele n-2 linii si coloane.
+        c este format din primii n-2 termeni ai linii n-1(Colana WIN).
+    perform_iterative:
+        Aplica operatia x = G * x + c pana se depaseste numarul de iteratii sau eroarea dintre 
+        termenul anterior si curent este mai mica decat toleranta.
+    heuristic_greedy:
+        La vectorul de probabilitati se adauga 1 si 0(probabilitati castig pentru WIN si LOOSE).
+        Se marcheaza pozitia de start ca visitata si se adauga in path.
+        Cat timp lungimea drumului este nenula, prima oara se verifica daca ultimul element din
+        drum este adaicent cu o zona de castig(caz in care se adauga pozitia de castil la drum si se returneaza).
+        In caz contrar se verifica daca toti vecinii nodului au fost vizitati, daca da, se scoate nodul 
+        din lista, altfel, se extrage vecinul cu probabilitate maxima de castig si se adauga in drum.
+        Inainte de returnari, vectorul path devine coloana.
+    decode_path:
+        Elimina din path ultimul camp(cel de WIN), apoi pentru fiecare celula parcursa ii determina linia si coloana.
+    
+***Linear Regression***
+    parse_data_set_file:
+        Se citesc dimeniunile matricei de celule.
+        Se citeste intreg fisierul ca un sir de caractere.
+        Se separa sirul de caractere in functie de linii folosind strsplit intr-o
+        coloana de celule.
+        Se elimina prima celula(dimensiunile).
+        Se imparte fiecare linie in functie de spatii si se obtine matricea de celule A.
+        Se extrage prima coloana, se transforma in matrice(este formata din numere) si este depozitata
+        in Y.
+        Apoi, pentru fiecare coloana cu stringuri formate din numere, in B se vr depozita numerele, iar pentru
+        celelalte se vor depozita stringurile.
+        Se extrag in InitialMatrix toate coloanele, incepand cu a 2a.
+    prepare_for_regression:
+        Se defineste matricea aux cu 2 coloane in care vom stoca date numerice.
+        FeatureMatrix este initializata cu o coloana de 0-uri.
+        Functia va contoriza numarul de coloane a lui FeatureMatrix in k.
+        Functia analizeaza primul elemental fiecarei coloane si proceseaza coloana in functie
+        de categoria in care a plasat primul element:
+        1)yes/no
+            In prima coloana a lui aux sunt stocate rezultatul compararii elementelor
+            coloanelor cu "yes"(yes => 1, no => 0).
+            Se concateneaza prima coloana a lui aux la FeatureMatrix.
+        2)furnished
+            Prima coloana al lui aux va retine rezultatul compararii fiecarui
+            element al lui InitialMatrix cu "semi-furnished".
+            A doua coloana va retine rezultatul compararii cu "unfurnished".
+            Va rezulta:
+                "furnished": 0 0
+                "semi-furnished": 1 0
+                "unfunished": 0 1
+            Se concateneaza ambele coloane la FeatureMatrix.
+        3)numar real 
+            Coloana se va convertii in coloana de numere reale cu str2double
+            si se va salva in double.
+            double se va concatena la FeatureMatrix
+        4)numar natural
+            Se procedeaza asemanator cu 3, doar ca se foloseste cell2mat care va fi stocat in num.
+        In final este eliminata prima coloana de 0(necesara pentru concatenare). 
+        S-a utilizat strncmp pentru a evita caractere in plus in siruri.
+    linear_regression_cost_function:
+        Se calculeaza h inmultind FeatureMatrix cu Theta(fiind omis primul element, Theta0 = 0).
+        Pentru a determina eroarea, se foloseste formula, imultind vectorul transpus cu vectorul coloana
+        pentru a determina suma patratelor.
+    parse_csv_file:
+        Procedam similar cu parse_data_set_file, doar ca separama a 2-a oara in functie de ','
+    gradient_descent:
+        Se initializeaza Theta ca o coloana de 0.
+        Se calucleaza functia h ca imultirea lui FeatureMatrix cu Theta,
+        se calculeaza eroarea ca h - Y, apoi se calculeaza gradientul si, in final
+        se caluleaza Theta conform formulei. toate acestea se repeta de iter ori.
+        La final, se adauga Theta0 = 0 la Theta.
+    normal_equation:
+        Theta este initializat cu 0.
+        Se verifica daca A este pozitiv definita(are toate valorile proprii definite).
+        Daca da, se aplica metoda gradientului conjugat data ca pseudocod.
+        Altfel, Theta va ramane cu valoile initiale(0).
+        Se adauga Theta0 = 0.
+    Pentru ridge_regression_cost_function si lasso_regression_cost_function, sunt aplicate sumele din 
+    teorie, cu observatia ca: pentru a calcula suma patratelor dintr-un vector coloana se
+    imulteste transpusa vectorului cu acesta.
+
+***MNSIT 101***
+    load_dataset:
+        Sunt incarcate X si y in memorie.
+    split_dataset:
+        Fie m si n dimensiunile lui C.
+        Se amesteca elementele. Prima oara se obtine un vector new_order
+        prin amestecarea numerelor de la 1 la m, apoi Z si t memoreaza elementele lui x
+        si y in acea ordine.
+        Se determina linia la care se termina liniile de trainning si incep cele 
+        de test ca m * percent.
+        Se separa in liniile.
+    initialize_weights:
+        Calculam epsilon conform formulei.
+        Pentru a genera numere aleatorii din intervalul (a, b) avem formula:
+            (b-a) * rand() + a 
+        Se inlocuieste pt (-epsilon, epslon).
+    expand:
+        Functie auxiliara functiei de cost.
+        len = lungimea lui y
+        y, primit ca argument, este un vector coloana cu numarul pe care il
+        reprezinta linia X corespunzatoare.
+        Se formeaza matricea Y cu 10 linii si len coloane. Pe fiecare linie a unei
+        coloana fiind stocat 1 daca i(linia lui Y) este numarul corespunzator liniei j
+        (coloana lui Y) a lui x.
+    cost_function:
+        Se extrage Th1 si Th2 din params.
+        Se obtine Y prin apelarea lui expand.
+        Se aplica forward propagation.
+        Se aplica backward propagation.
+        Se calculeaza gradientii, cu observatia ca la prima linie nu se aduna lambda/n *Theta
+        Se scriu gradientii ca vector linie si se concateneaza.
+        Se calculeaza functia de cost. Ca optimizare, in loc sa aplicam ".*", am desfasurat
+        matricile in vectori coloana si i-am imultit transpusa * original.
+    predict_classes:
+        Se extrage Th1 si Th2 din weights.
+        Se aplica forward propagation.
+        Din a3, se extrage in classes pozitia maximului pe fiecare coloana, acela fiind numarul.
+Doresc corectarea manuală a testelor pentru tema 1.
